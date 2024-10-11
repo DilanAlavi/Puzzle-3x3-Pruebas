@@ -19,6 +19,21 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(len(estado), 9)
         self.assertTrue(all(0 <= n <= 8 for n in estado))
         self.assertEqual(self.agente.es_solucionable.call_count, 1)
+        
+    def test_generar_estado_valido_multiples_intentos(self):
+        estados_no_validos = 2
+        call_count = 0
+        
+        def es_solucionable_mock(estado):
+            nonlocal call_count
+            call_count += 1
+            return call_count > estados_no_validos  # El tercer intento es válido
+        self.agente.es_solucionable = MagicMock(side_effect=es_solucionable_mock)
+        estado = self.agente.generar_estado_valido()
+        self.assertIsInstance(estado, tuple)
+        self.assertEqual(len(estado), 9)
+        self.assertTrue(all(0 <= n <= 8 for n in estado))
+        self.assertEqual(self.agente.es_solucionable.call_count, 3)
     
 if __name__ == '__main__':
     unittest.main()
