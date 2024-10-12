@@ -95,13 +95,19 @@ class TestAgenteBot(unittest.TestCase):
     def test_estado_con_un_elemento(self):
         estado = (0,)
         self.assertEqual(self.agente.encontrar_vacio(estado), 0)
+        
+    def test_movimientos_validos_centro(self):
+        indice_vacio = 4  # Posición central del tablero
+        movimientos_esperados = [
+            ('arriba', -3),
+            ('abajo', 3),
+            ('izquierda', -1),
+            ('derecha', 1)
+        ]
+        movimientos_obtenidos = self.agente.obtener_movimientos_validos(indice_vacio)
+        self.assertEqual(set(movimientos_obtenidos), set(movimientos_esperados))
+        self.assertEqual(len(movimientos_obtenidos), 4)
 
 
-   
-
-
-
-
-    
 if __name__ == '__main__':
     unittest.main()
