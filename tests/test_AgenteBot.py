@@ -140,8 +140,9 @@ class TestAgenteBot(unittest.TestCase):
         estado = (1, 2, 3, 4, 5, 6, 7, 8, 0)
         self.assertEqual(self.agente.heuristica_piezas_fuera_lugar(estado), 0)
 
-
-        
+    def test_estado_completamente_desordenado(self):
+        estado = (8, 7, 6, 5, 4, 3, 2, 1, 0)
+        self.assertEqual(self.agente.heuristica_piezas_fuera_lugar(estado), 8)
 
 
 
