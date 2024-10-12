@@ -55,6 +55,15 @@ class TestAgenteBot(unittest.TestCase):
         movimientos_esperados = set(['arriba', 'abajo', 'izquierda', 'derecha'])
         movimientos_obtenidos = set(mov for mov, _ in sucesores)
         self.assertEqual(movimientos_esperados, movimientos_obtenidos)
+    def test_generar_sucesores_esquina(self):
+        estado = (0, 1, 2, 3, 4, 5, 6, 7, 8)
+        sucesores = self.agente.generar_sucesores(estado)
+        self.assertEqual(len(sucesores), 2) 
+        movimientos_esperados = set(['abajo', 'derecha'])
+        movimientos_obtenidos = set(mov for mov, _ in sucesores)
+        self.assertEqual(movimientos_esperados, movimientos_obtenidos)
+        
+    
 
    
 
