@@ -107,6 +107,15 @@ class TestAgenteBot(unittest.TestCase):
         movimientos_obtenidos = self.agente.obtener_movimientos_validos(indice_vacio)
         self.assertEqual(set(movimientos_obtenidos), set(movimientos_esperados))
         self.assertEqual(len(movimientos_obtenidos), 4)
+        
+    def test_intercambiar(self):
+        estado_inicial = [1, 0, 2, 3, 4, 5, 6, 7, 8]
+        indice_vacio = 1
+        offset = 1
+        estado_esperado = (1, 2, 0, 3, 4, 5, 6, 7, 8)
+        resultado = self.agente.intercambiar(estado_inicial, indice_vacio, offset)
+        self.assertEqual(resultado, estado_esperado)
+
 
 
 if __name__ == '__main__':
