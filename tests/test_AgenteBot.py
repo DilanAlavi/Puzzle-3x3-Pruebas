@@ -149,6 +149,14 @@ class TestAgenteBot(unittest.TestCase):
     def test_estado_completamente_desordenado(self):
         estado = (8, 7, 6, 5, 4, 3, 2, 1, 0)
         self.assertEqual(self.agente.heuristica_distancia_manhattan(estado), 20)
+        
+    def test_heuristica_secuencia_lineal_conflictos_con_conflictos(self):
+        estado_con_conflictos = (2, 1, 3, 4, 5, 6, 8, 7, 0)
+        h_conflictos = self.agente.heuristica_secuencia_lineal_conflictos(estado_con_conflictos)
+        h_manhattan = self.agente.heuristica_distancia_manhattan(estado_con_conflictos)
+        self.assertGreater(h_conflictos, h_manhattan)
+
+
 
 
 
