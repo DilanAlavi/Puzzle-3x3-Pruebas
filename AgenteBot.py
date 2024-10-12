@@ -16,7 +16,7 @@ class AgenteBot:
 
     def es_solucionable(self, estado: List[int]) -> bool:
         inversiones = 0
-        for i in range(len(estado)):
+        for i in range(len(estado)):    
             for j in range(i + 1, len(estado)):
                 if estado[i] != 0 and estado[j] != 0 and estado[i] > estado[j]:
                     inversiones += 1

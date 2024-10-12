@@ -34,6 +34,13 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(len(estado), 9)
         self.assertTrue(all(0 <= n <= 8 for n in estado))
         self.assertEqual(self.agente.es_solucionable.call_count, 3)
+        
+    def test_estado_vacio_o_un_elemento(self):
+        self.assertTrue(self.agente.es_solucionable([]))
+        self.assertTrue(self.agente.es_solucionable([0]))
+        self.assertTrue(self.agente.es_solucionable([1]))
+
+
     
 if __name__ == '__main__':
     unittest.main()
