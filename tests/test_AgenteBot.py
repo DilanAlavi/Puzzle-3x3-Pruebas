@@ -63,7 +63,19 @@ class TestAgenteBot(unittest.TestCase):
         movimientos_obtenidos = set(mov for mov, _ in sucesores)
         self.assertEqual(movimientos_esperados, movimientos_obtenidos)
         
-    
+    def test_estados_resultantes(self):
+        estado = (1, 2, 3, 4, 0, 5, 6, 7, 8)
+        sucesores = self.agente.generar_sucesores(estado)
+        estados_esperados = [
+            (1, 0, 3, 4, 2, 5, 6, 7, 8),  
+            (1, 2, 3, 4, 7, 5, 6, 0, 8),  
+            (1, 2, 3, 0, 4, 5, 6, 7, 8),  
+            (1, 2, 3, 4, 5, 0, 6, 7, 8)  
+        ]
+        estados_obtenidos = [estado for _, estado in sucesores]
+        self.assertEqual(set(estados_esperados), set(estados_obtenidos))
+
+
 
    
 
