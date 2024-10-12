@@ -146,6 +146,10 @@ class TestAgenteBot(unittest.TestCase):
     def test_estado_ordenado(self):
         estado = (1, 2, 3, 4, 5, 6, 7, 8, 0)
         self.assertEqual(self.agente.heuristica_distancia_manhattan(estado), 12)
+    def test_estado_completamente_desordenado(self):
+        estado = (8, 7, 6, 5, 4, 3, 2, 1, 0)
+        self.assertEqual(self.agente.heuristica_distancia_manhattan(estado), 20)
+
 
 
 
