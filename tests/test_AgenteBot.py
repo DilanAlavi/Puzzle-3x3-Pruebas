@@ -115,6 +115,33 @@ class TestAgenteBot(unittest.TestCase):
         estado_esperado = (1, 2, 0, 3, 4, 5, 6, 7, 8)
         resultado = self.agente.intercambiar(estado_inicial, indice_vacio, offset)
         self.assertEqual(resultado, estado_esperado)
+    def test_aplicar_movimientos(self):
+        estado_inicial = (1, 2, 3, 4, 0, 5, 6, 7, 8)
+        indice_vacio = 4
+        movimientos = [
+            ('arriba', -3),
+            ('abajo', 3),
+            ('izquierda', -1),
+            ('derecha', 1)
+        ]
+
+        sucesores = self.agente.aplicar_movimientos(estado_inicial, indice_vacio, movimientos)
+        # Verificar que se generaron 4 sucesores
+        self.assertEqual(len(sucesores), 4)
+        sucesores_esperados = [
+            ('arriba', (1, 0, 3, 4, 2, 5, 6, 7, 8)),
+            ('abajo', (1, 2, 3, 4, 7, 5, 6, 0, 8)),
+            ('izquierda', (1, 2, 3, 0, 4, 5, 6, 7, 8)),
+            ('derecha', (1, 2, 3, 4, 5, 0, 6, 7, 8))
+        ]
+        self.assertEqual(set(sucesores), set(sucesores_esperados))
+        
+    def test_estado_ordenado(self):
+        estado = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+        self.assertEqual(self.agente.heuristica_piezas_fuera_lugar(estado), 0)
+
+
+        
 
 
 
