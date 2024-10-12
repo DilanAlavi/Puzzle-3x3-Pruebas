@@ -155,6 +155,12 @@ class TestAgenteBot(unittest.TestCase):
         h_conflictos = self.agente.heuristica_secuencia_lineal_conflictos(estado_con_conflictos)
         h_manhattan = self.agente.heuristica_distancia_manhattan(estado_con_conflictos)
         self.assertGreater(h_conflictos, h_manhattan)
+    def test_heuristica_secuencia_lineal_conflictos_siempre_mayor_igual_manhattan(self):
+        estado_aleatorio = (3, 1, 2, 4, 0, 5, 6, 7, 8)
+        h_slc = self.agente.heuristica_secuencia_lineal_conflictos(estado_aleatorio)
+        h_manhattan = self.agente.heuristica_distancia_manhattan(estado_aleatorio)
+        self.assertGreaterEqual(h_slc, h_manhattan)
+
 
 
 
