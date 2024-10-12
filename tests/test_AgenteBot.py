@@ -43,7 +43,10 @@ class TestAgenteBot(unittest.TestCase):
     def test_estado_sin_inversiones(self):
         self.assertTrue(self.agente.es_solucionable([1, 2, 3, 4, 0]))
         self.assertTrue(self.agente.es_solucionable([0, 1, 2, 3, 4]))
-
+    def test_estado_con_inversiones(self):
+        self.assertFalse(self.agente.es_solucionable([2, 1, 3, 4, 0]))  
+        self.assertFalse(self.agente.es_solucionable([3, 2, 1, 4, 0])) 
+        self.assertTrue(self.agente.es_solucionable([4, 3, 2, 1, 0]))  
 
 
 
