@@ -83,6 +83,20 @@ class TestAgenteBot(unittest.TestCase):
         movimientos_esperados = set(['arriba', 'izquierda'])
         movimientos_obtenidos = set(mov for mov, _ in sucesores)
         self.assertEqual(movimientos_esperados, movimientos_obtenidos)
+        
+    def test_vacio_al_inicio(self):
+        estado = (0, 1, 2, 3, 4, 5, 6, 7, 8)
+        self.assertEqual(self.agente.encontrar_vacio(estado), 0)
+
+    def test_vacio_al_final(self):
+        estado = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+        self.assertEqual(self.agente.encontrar_vacio(estado), 8)
+
+    def test_estado_con_un_elemento(self):
+        estado = (0,)
+        self.assertEqual(self.agente.encontrar_vacio(estado), 0)
+
+
    
 
 
