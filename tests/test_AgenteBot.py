@@ -46,7 +46,17 @@ class TestAgenteBot(unittest.TestCase):
     def test_estado_con_inversiones(self):
         self.assertFalse(self.agente.es_solucionable([2, 1, 3, 4, 0]))  
         self.assertFalse(self.agente.es_solucionable([3, 2, 1, 4, 0])) 
-        self.assertTrue(self.agente.es_solucionable([4, 3, 2, 1, 0]))  
+        self.assertTrue(self.agente.es_solucionable([4, 3, 2, 1, 0]))
+          
+    def test_generar_sucesores_centro(self):
+        estado = (1, 2, 3, 4, 0, 5, 6, 7, 8)
+        sucesores = self.agente.generar_sucesores(estado)
+        self.assertEqual(len(sucesores), 4) 
+        movimientos_esperados = set(['arriba', 'abajo', 'izquierda', 'derecha'])
+        movimientos_obtenidos = set(mov for mov, _ in sucesores)
+        self.assertEqual(movimientos_esperados, movimientos_obtenidos)
+
+   
 
 
 
