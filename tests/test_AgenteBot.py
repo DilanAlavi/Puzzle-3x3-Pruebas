@@ -4,6 +4,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from AgenteBot import AgenteBot
+from typing import Tuple, Callable, List
 
 class TestAgenteBot(unittest.TestCase):
     def setUp(self):
@@ -192,6 +193,13 @@ class TestAgenteBot(unittest.TestCase):
         conflictos = self.agente.contar_conflictos_filas(estado)
         self.assertEqual(conflictos, 0)
     
+    # fabio 14
+    def heuristica_dummy(self, estado: Tuple[int, ...]) -> int:
+        return sum(estado)
+    def test_inicializar_frontera(self):
+        estado_inicial = (1, 2, 3)  # Ejemplo de estado inicial
+        frontera = self.agente.inicializar_frontera(estado_inicial, self.heuristica_dummy)
+        self.assertEqual(frontera, [(6, (1, 2, 3), [])])  # 1 + 2 + 3 = 6
 
     # Patrick 12
     def test_contar_conflictos_columnas_sin_conflictos(self):
