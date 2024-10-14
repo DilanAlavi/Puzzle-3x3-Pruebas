@@ -175,6 +175,10 @@ class TestAgenteBot(unittest.TestCase):
         estado = (1, 2, 0, 0, 5, 0, 7, 8, 0)
         conflictos = self.agente.contar_conflictos_filas(estado)
         self.assertEqual(conflictos, 0)
+    def test_contar_conflictos_filas_caminos4(self):
+        estado = (3, 2, 0, 0, 5, 0, 7, 8, 0)
+        conflictos = self.agente.contar_conflictos_filas(estado)
+        self.assertEqual(conflictos, 2)
 
 
 if __name__ == '__main__':
