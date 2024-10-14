@@ -162,10 +162,11 @@ class TestAgenteBot(unittest.TestCase):
         self.assertGreaterEqual(h_slc, h_manhattan)
 
 
-
-
-
-
+    # fabio 11
+    def test_contar_conflictos_filas_no_conflictos(self):
+        estado = (1, 2, 0, 4, 5, 6, 7, 8, 0)
+        conflictos = self.agente.contar_conflictos_filas(estado)
+        self.assertEqual(conflictos, 0)
 
 
 if __name__ == '__main__':
