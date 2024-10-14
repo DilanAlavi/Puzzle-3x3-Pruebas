@@ -214,5 +214,10 @@ class TestAgenteBot(unittest.TestCase):
         estado = (1, 0, 3, 4, 5, 6, 7, 8, 0)
         self.assertEqual(self.agente.contar_conflictos_columnas(estado), 0)
 
+    def test_contar_conflictos_columnas_multiples_conflictos(self):
+        estado = (7, 2, 3, 4, 5, 6, 1, 8, 0)
+        self.assertEqual(self.agente.contar_conflictos_columnas(estado), 6)
+
+
 if __name__ == '__main__':
     unittest.main()
