@@ -218,6 +218,12 @@ class TestAgenteBot(unittest.TestCase):
         estado = (7, 2, 3, 4, 5, 6, 1, 8, 0)
         self.assertEqual(self.agente.contar_conflictos_columnas(estado), 6)
 
+    # Patrick 15
+    def test_frontera_vacia_max_frontera_0(self):
+        frontera = []
+        max_frontera = 0
+        resultado = self.agente.actualizar_max_frontera(frontera, max_frontera)
+        self.assertEqual(resultado, 0)
 
 if __name__ == '__main__':
     unittest.main()
