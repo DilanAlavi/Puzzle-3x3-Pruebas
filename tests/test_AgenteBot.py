@@ -230,6 +230,10 @@ class TestAgenteBot(unittest.TestCase):
         estado_meta = (1, 2, 3, 4, 5, 6, 7, 8, 0)        
         resultado = self.agente.es_estado_meta(estado_meta)
         self.assertTrue(resultado)
+    def test_estado_meta_false(self):
+        estado_meta = (1, 2, 3, 4, 5, 6, 7, 0, 8)        
+        resultado = self.agente.es_estado_meta(estado_meta)
+        self.assertFalse(resultado)
 
 
 if __name__ == '__main__':
