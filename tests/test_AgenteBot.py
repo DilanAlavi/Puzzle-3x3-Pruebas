@@ -9,6 +9,7 @@ from typing import Tuple, Callable, List
 class TestAgenteBot(unittest.TestCase):
     def setUp(self):
         self.agente = AgenteBot()
+        self.estado_meta = (1, 2, 3, 4, 5, 6, 7, 8, 0)
 
     def test_init(self):
         self.assertEqual(self.agente.estado_meta, (1, 2, 3, 4, 5, 6, 7, 8, 0))
@@ -225,15 +226,27 @@ class TestAgenteBot(unittest.TestCase):
         resultado = self.agente.actualizar_max_frontera(frontera, max_frontera)
         self.assertEqual(resultado, 0)
 
-    # Fabio 17
-    def test_estado_meta_true(self):
-        estado_meta = (1, 2, 3, 4, 5, 6, 7, 8, 0)        
-        resultado = self.agente.es_estado_meta(estado_meta)
-        self.assertTrue(resultado)
-    def test_estado_meta_false(self):
-        estado_meta = (1, 2, 3, 4, 5, 6, 7, 0, 8)        
-        resultado = self.agente.es_estado_meta(estado_meta)
-        self.assertFalse(resultado)
+
+    #Fabio 33
+    def heuristica_piezas_fuera_lugar(self, estado):
+        return sum(1 for i in range(len(estado)) if estado[i] != self.estado_meta[i] and estado[i] != 0)
+    def test_expandir_nodo_Camino1(self):
+        estado_inicial = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+        camino = []
+        frontera = []
+        visitados = set()
+        g = 0
+        self.agente.generar_sucesores = lambda estado: [("mover_abajo", (1, 2, 3, 4, 5, 0, 7, 8, 6))]
+        self.agente.expandir_nodo_a_estrella_limitada(estado_inicial, camino, frontera, visitados, self.heuristica_piezas_fuera_lugar, g)
+        self.assertEqual(len(frontera), 1, "Frontera no tiene un solo nodo como se esperaba")
+        sucesor_esperado = (1, 2, 3, 4, 5, 0, 7, 8, 6)
+        nuevo_estado = frontera[0][2]  
+        self.assertEqual(nuevo_estado, sucesor_esperado, "El sucesor esperado no está en la frontera")
+        self.assertIn(estado_inicial, visitados, "El estado inicial no está en visitados")
+        self.assertEqual(len(visitados), 1, "No se visitó un solo estado")
+        camino_esperado = ["mover_abajo"]
+        self.assertEqual(frontera[0][3], camino_esperado, "El camino no se actualizó")
+    
 
 
 if __name__ == '__main__':
