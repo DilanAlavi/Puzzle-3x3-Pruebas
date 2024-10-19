@@ -5,11 +5,17 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from AgenteBot import AgenteBot
 from typing import Tuple, Callable, List
+from unittest.mock import patch
 
 class TestAgenteBot(unittest.TestCase):
     def setUp(self):
         self.agente = AgenteBot()
         self.estado_meta = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+        self.resultados = {}
+        self.clave = "prueba_clave"
+        self.estado = (1, 2, 3, 4, 5, 6, 0, 7, 8)  # Asegúrate de que este estado sea válido
+        self.max_profundidad = 3  # O cualquier valor que desees probar
+        self.tiempo_limite = 5  # O cualquier valor que desees probar
 
     def test_init(self):
         self.assertEqual(self.agente.estado_meta, (1, 2, 3, 4, 5, 6, 7, 8, 0))
@@ -246,7 +252,6 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(len(visitados), 1, "No se visitó un solo estado")
         camino_esperado = ["mover_abajo"]
         self.assertEqual(frontera[0][3], camino_esperado, "El camino no se actualizó")
-    
     def test_no_entra_al_for(self):
         estado_inicial = (1, 2, 3, 4, 5, 6, 7, 8, 0)  # Estado inicial del puzzle 3x3
         camino = []
@@ -258,7 +263,6 @@ class TestAgenteBot(unittest.TestCase):
         self.agente.expandir_nodo_a_estrella_limitada(estado_inicial, camino, frontera, visitados, self.heuristica_piezas_fuera_lugar, g)
         self.assertEqual(len(frontera), 0, "La frontera no deberia contener nodos, ya que no se generaron sucesores")
         self.assertIn(estado_inicial, visitados, "El estado inicial no se añadió a visitados como se esperaba")
-
     def test_no_entra_al_if_en_el_for(self):
         estado_inicial = (1, 2, 3, 4, 5, 6, 7, 8, 0)
         camino = []
@@ -269,6 +273,23 @@ class TestAgenteBot(unittest.TestCase):
         self.agente.expandir_nodo_a_estrella_limitada(estado_inicial, camino, frontera, visitados, self.heuristica_piezas_fuera_lugar, g)
         self.assertEqual(len(frontera), 0, "La frontera no debería contener nodos, ya que el sucesor estaba en visitados")
         self.assertIn(estado_inicial, visitados, "El estado inicial no se añadió a visitados como se esperaba")
+
+    @patch.object(AgenteBot, 'busqueda_codiciosa_limitada')
+    @patch.object(AgenteBot, 'actualizar_resultados')
+    def test_ejecutar_experimento_codiciosa(self, mock_actualizar_resultados, mock_busqueda_codiciosa):
+        resultados = {}
+        clave = "test_clave"
+        algoritmo = "codiciosa"
+        estado = (1, 2, 3, 4, 5, 6, 7, 8, 0)  
+        heuristica = lambda x: 0  
+        max_profundidad = 10
+        tiempo_limite = 1.0
+        mock_busqueda_codiciosa.return_value = (['solucion'], 5, 10) 
+
+        self.agente.ejecutar_experimento(resultados, clave, algoritmo, estado, heuristica, max_profundidad, tiempo_limite)
+        mock_busqueda_codiciosa.assert_called_once_with(estado, heuristica, max_profundidad, tiempo_limite)
+        solucion, nodos_expandidos, max_frontera = mock_busqueda_codiciosa.return_value 
+        mock_actualizar_resultados.assert_called_once_with(resultados, clave, solucion, max_frontera, unittest.mock.ANY)
 
 if __name__ == '__main__':
     unittest.main()

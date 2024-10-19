@@ -211,16 +211,28 @@ class AgenteBot:
 
     def ejecutar_experimento(self, resultados: dict, clave: str, algoritmo: str, estado: Tuple[int, ...], heuristica: Callable, max_profundidad: int, tiempo_limite: float):
         inicio = time.time()
-
         if algoritmo == 'codiciosa':
-            solucion, max_frontera = self.busqueda_codiciosa_limitada(estado, heuristica, max_profundidad, tiempo_limite)
+            print("..............................codiciosa")
+            solucion, nodos_expandidos, max_frontera = self.busqueda_codiciosa_limitada(estado, heuristica, max_profundidad, tiempo_limite)
         else:
+            print("otra")
             solucion, max_frontera = self.a_estrella_limitada(estado, heuristica, max_profundidad, tiempo_limite)
 
         fin = time.time()
         self.actualizar_resultados(resultados, clave, solucion, max_frontera, fin - inicio)
 
     def actualizar_resultados(self, resultados: dict, clave: str, solucion: List[str], max_frontera: int, tiempo: float):
+        # Verificar si la clave ya existe en resultados, si no, inicializarla
+        if clave not in resultados:
+            resultados[clave] = {
+                'tiempo': 0,
+                'max_frontera': 0,
+                'soluciones': 0,
+                'optimas': 0,
+                'timeout': 0
+            }
+
+        # Ahora podemos actualizar los valores
         resultados[clave]['tiempo'] += tiempo
         resultados[clave]['max_frontera'] = max(resultados[clave]['max_frontera'], max_frontera)
 
@@ -231,30 +243,34 @@ class AgenteBot:
         else:
             resultados[clave]['timeout'] += 1
 
+
     def promediar_tiempos(self, resultados: dict, num_estados: int):
         for clave in resultados:
             resultados[clave]['tiempo'] /= num_estados
 
 
-    def busqueda_codiciosa_limitada(self, estado_inicial: Tuple[int, ...], heuristica: Callable, max_profundidad: int,
-                                    tiempo_limite: float) -> Tuple[List[str], int]:
-        inicio = time.time()
-        frontera = self.inicializar_frontera_codiciosa(estado_inicial, heuristica)
+    def busqueda_codiciosa_limitada(self, estado_inicial: Tuple[int, ...], heuristica: Callable, max_profundidad: int, tiempo_limite: float) -> Tuple[List[str], int]:
+        frontera = self.inicializar_frontera(estado_inicial, heuristica)  # Usa la función correcta
+        visitados = set()
+        nodos_expandidos = 0
         max_frontera = 0
 
-        while self.condicion_continua(frontera, inicio, tiempo_limite):
+        while frontera:
             max_frontera = self.actualizar_max_frontera(frontera, max_frontera)
-            estado, camino = self.extraer_mejor_nodo_codiciosa(frontera)
+            estado, camino = self.extraer_mejor_nodo(frontera)
 
             if self.es_estado_meta(estado):
-                return camino, max_frontera
+                return camino, nodos_expandidos, max_frontera
 
-            if self.alcanzado_max_profundidad(camino, max_profundidad):
+            if estado in visitados:
                 continue
 
-            self.expandir_nodo_codiciosa(estado, camino, frontera, heuristica)
+            visitados.add(estado)
+            nodos_expandidos += 1
 
-        return None, max_frontera
+            self.expandir_nodo(estado, camino, frontera, visitados, heuristica)
+
+        return [], nodos_expandidos, max_frontera
 
     def a_estrella_limitada(self, estado_inicial: Tuple[int, ...], heuristica: Callable, max_profundidad: int,
                             tiempo_limite: float) -> Tuple[List[str], int]:
