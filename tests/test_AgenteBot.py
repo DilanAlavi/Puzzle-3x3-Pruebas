@@ -274,6 +274,7 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(len(frontera), 0, "La frontera no debería contener nodos, ya que el sucesor estaba en visitados")
         self.assertIn(estado_inicial, visitados, "El estado inicial no se añadió a visitados como se esperaba")
 
+    #fabio 30
     @patch.object(AgenteBot, 'busqueda_codiciosa_limitada')
     @patch.object(AgenteBot, 'actualizar_resultados')
     def test_ejecutar_experimento_codiciosa(self, mock_actualizar_resultados, mock_busqueda_codiciosa):
