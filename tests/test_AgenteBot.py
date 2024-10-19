@@ -274,7 +274,7 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(len(frontera), 0, "La frontera no debería contener nodos, ya que el sucesor estaba en visitados")
         self.assertIn(estado_inicial, visitados, "El estado inicial no se añadió a visitados como se esperaba")
 
-    #fabio 30
+    #fabio 30 TRUE
     @patch.object(AgenteBot, 'busqueda_codiciosa_limitada')
     @patch.object(AgenteBot, 'actualizar_resultados')
     def test_ejecutar_experimento_codiciosa(self, mock_actualizar_resultados, mock_busqueda_codiciosa):
@@ -286,11 +286,27 @@ class TestAgenteBot(unittest.TestCase):
         max_profundidad = 10
         tiempo_limite = 1.0
         mock_busqueda_codiciosa.return_value = (['solucion'], 5, 10) 
-
         self.agente.ejecutar_experimento(resultados, clave, algoritmo, estado, heuristica, max_profundidad, tiempo_limite)
         mock_busqueda_codiciosa.assert_called_once_with(estado, heuristica, max_profundidad, tiempo_limite)
         solucion, nodos_expandidos, max_frontera = mock_busqueda_codiciosa.return_value 
         mock_actualizar_resultados.assert_called_once_with(resultados, clave, solucion, max_frontera, unittest.mock.ANY)
+
+    #FABIO 30 FALSE
+    @patch.object(AgenteBot, 'a_estrella_limitada')
+    @patch.object(AgenteBot, 'actualizar_resultados')
+    def test_ejecutar_experimento_a_estrella(self, mock_actualizar_resultados, mock_a_estrella):
+        resultados = {}
+        clave = "test_clave"
+        algoritmo = "a_estrella"
+        estado = (1, 2, 3, 4, 5, 6, 7, 8, 0) 
+        heuristica = lambda x: 0 
+        max_profundidad = 10
+        tiempo_limite = 1.0
+        mock_a_estrella.return_value = (['solucion_a'], 10)
+        self.agente.ejecutar_experimento(resultados, clave, algoritmo, estado, heuristica, max_profundidad, tiempo_limite)
+        mock_a_estrella.assert_called_once_with(estado, heuristica, max_profundidad, tiempo_limite)
+        solucion, max_frontera = mock_a_estrella.return_value  # Obtiene los valores devueltos del mock
+        mock_actualizar_resultados.assert_called_once_with(resultados, clave, solucion, max_frontera, unittest.mock.ANY)  # El tiempo se pasa como ANY
 
 if __name__ == '__main__':
     unittest.main()
