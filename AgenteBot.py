@@ -280,18 +280,17 @@ class AgenteBot:
 
     def expandir_nodo_a_estrella_limitada(self, estado: Tuple[int, ...], camino: List[str], frontera: List[Tuple[int, int, Tuple[int, ...], List[str]]],
                                         visitados: set, heuristica: Callable, g: int):
-        """Expande el nodo actual en A*, generando sucesores y actualizando la frontera."""
-        visitados.add(estado)  # Añadir el estado actual a los visitados
-        print("Vere si entro al for")
+        visitados.add(estado)
+        #print("Vere si entro al for")
         for accion, nuevo_estado in self.generar_sucesores(estado):
-            print("ENTRE FOR")
+            #print("ENTRE FOR")
             if nuevo_estado not in visitados:
-                print("eNTRE iF")
+                #print("eNTRE iF")
                 nuevo_g = g + 1
                 f = nuevo_g + heuristica(nuevo_estado)
                 heapq.heappush(frontera, (f, nuevo_g, nuevo_estado, camino + [accion]))
-            print("sali if")
-        print("SALI FOR")
+            #print("sali if")
+        #print("SALI FOR")
                 
     def resolver(self, estado_inicial: List[int]) -> List[str]:
         solucion, _, _ = self.a_estrella(tuple(estado_inicial), self.heuristica_distancia_manhattan)

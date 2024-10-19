@@ -259,5 +259,16 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(len(frontera), 0, "La frontera no deberia contener nodos, ya que no se generaron sucesores")
         self.assertIn(estado_inicial, visitados, "El estado inicial no se añadió a visitados como se esperaba")
 
+    def test_no_entra_al_if_en_el_for(self):
+        estado_inicial = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+        camino = []
+        frontera = []
+        visitados = {(1, 2, 3, 4, 5, 0, 7, 8, 6)} 
+        g = 0
+        self.agente.generar_sucesores = lambda estado: [("mover_abajo", (1, 2, 3, 4, 5, 0, 7, 8, 6))]
+        self.agente.expandir_nodo_a_estrella_limitada(estado_inicial, camino, frontera, visitados, self.heuristica_piezas_fuera_lugar, g)
+        self.assertEqual(len(frontera), 0, "La frontera no debería contener nodos, ya que el sucesor estaba en visitados")
+        self.assertIn(estado_inicial, visitados, "El estado inicial no se añadió a visitados como se esperaba")
+
 if __name__ == '__main__':
     unittest.main()
