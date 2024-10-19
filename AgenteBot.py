@@ -282,6 +282,7 @@ class AgenteBot:
                                         visitados: set, heuristica: Callable, g: int):
         """Expande el nodo actual en A*, generando sucesores y actualizando la frontera."""
         visitados.add(estado)  # Añadir el estado actual a los visitados
+        print("Vere si entro al for")
         for accion, nuevo_estado in self.generar_sucesores(estado):
             print("ENTRE FOR")
             if nuevo_estado not in visitados:

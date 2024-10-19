@@ -247,7 +247,17 @@ class TestAgenteBot(unittest.TestCase):
         camino_esperado = ["mover_abajo"]
         self.assertEqual(frontera[0][3], camino_esperado, "El camino no se actualizó")
     
-
+    def test_no_entra_al_for(self):
+        estado_inicial = (1, 2, 3, 4, 5, 6, 7, 8, 0)  # Estado inicial del puzzle 3x3
+        camino = []
+        frontera = []
+        visitados = set()
+        g = 0
+        # Mock de generar_sucesores que devuelve una lista vacía para evitar que el for se ejecute
+        self.agente.generar_sucesores = lambda estado: []
+        self.agente.expandir_nodo_a_estrella_limitada(estado_inicial, camino, frontera, visitados, self.heuristica_piezas_fuera_lugar, g)
+        self.assertEqual(len(frontera), 0, "La frontera no deberia contener nodos, ya que no se generaron sucesores")
+        self.assertIn(estado_inicial, visitados, "El estado inicial no se añadió a visitados como se esperaba")
 
 if __name__ == '__main__':
     unittest.main()
