@@ -227,10 +227,10 @@ class TestAgenteBot(unittest.TestCase):
 
     # Patrick 15
     def test_frontera_vacia_max_frontera_0(self):
-        frontera = []
-        max_frontera = 0
+        frontera = [(1, (1, 2), ["A"]), (2, (2, 3), ["B"]), (3, (3, 4), ["C"])]
+        max_frontera = 2
         resultado = self.agente.actualizar_max_frontera(frontera, max_frontera)
-        self.assertEqual(resultado, 0)
+        self.assertEqual(resultado, 3)
 
 
     #Fabio 33
