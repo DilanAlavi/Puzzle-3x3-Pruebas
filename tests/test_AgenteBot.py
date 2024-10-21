@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 import sys
+import heapq
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from AgenteBot import AgenteBot
@@ -307,6 +308,27 @@ class TestAgenteBot(unittest.TestCase):
         mock_a_estrella.assert_called_once_with(estado, heuristica, max_profundidad, tiempo_limite)
         solucion, max_frontera = mock_a_estrella.return_value  # Obtiene los valores devueltos del mock
         mock_actualizar_resultados.assert_called_once_with(resultados, clave, solucion, max_frontera, unittest.mock.ANY)  # El tiempo se pasa como ANY
+
+    # Patrick 16
+    def test_extraer_mejor_nodo_multiple_elementos(self):
+        """Prueba la extracción cuando la frontera tiene múltiples elementos"""
+        estado1 = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+        estado2 = (1, 2, 3, 4, 0, 6, 7, 8, 5)
+        estado3 = (1, 2, 3, 0, 4, 6, 7, 8, 5)
+        
+        frontera = [
+            (3, estado1, ["arriba"]),
+            (1, estado2, ["derecha"]),
+            (2, estado3, ["izquierda"])
+        ]
+        heapq.heapify(frontera)
+        
+        estado_resultado, camino_resultado = self.agente.extraer_mejor_nodo(frontera)
+        
+        # Debe extraer el estado2 porque tiene el menor valor heurístico (1)
+        self.assertEqual(estado_resultado, estado2)
+        self.assertEqual(camino_resultado, ["derecha"])
+        self.assertEqual(len(frontera), 2)
 
 if __name__ == '__main__':
     unittest.main()
