@@ -65,6 +65,8 @@ class AgenteBot:
         return h
 
     def contar_conflictos_filas(self, estado: Tuple[int, ...]) -> int:
+        if len(estado) != 9:
+            raise ValueError("El estado debe tener exactamente 9 elementos")
         conflictos = 0
         for fila in range(3):
             for i in range(3):

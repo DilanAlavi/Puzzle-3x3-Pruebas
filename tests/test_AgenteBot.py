@@ -181,6 +181,10 @@ class TestAgenteBot(unittest.TestCase):
 
 
     # fabio 11
+    def test_contar_conflictos_filas_error(self):
+            estado_invalido = (1, 2, 3, 4, 5, 6, 7, 8) # estado con 8 elems
+            with self.assertRaises(ValueError):
+                self.agente.contar_conflictos_filas(estado_invalido) 
     def test_contar_conflictos_filas_no_conflictos(self):
         estado = (1, 2, 0, 4, 5, 6, 7, 8, 0)
         conflictos = self.agente.contar_conflictos_filas(estado)
@@ -209,7 +213,7 @@ class TestAgenteBot(unittest.TestCase):
         estado = (0, 0, 0, 0, 0, 0, 0, 0, 0) 
         conflictos = self.agente.contar_conflictos_filas(estado)
         self.assertEqual(conflictos, 0)
-    
+
     # fabio 14
     def heuristica_dummy(self, estado: Tuple[int, ...]) -> int:
         return sum(estado)
