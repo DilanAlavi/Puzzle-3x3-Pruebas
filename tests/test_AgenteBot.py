@@ -423,5 +423,50 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(nodos, 2)
         self.assertTrue(max_frontera > 0)
 
+    # Patrick 18
+    def test_expandir_nodo_sin_sucesores(self):
+        estado = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+        camino: List[str] = []
+        frontera: List[Tuple[int, Tuple[int, ...], List[str]]] = []
+        visitados: Set[Tuple[int, ...]] = set()
+        heuristica = Mock(return_value=0)
+
+        self.agente.generar_sucesores = Mock(return_value=[])
+        self.agente.expandir_nodo(estado, camino, frontera, visitados, heuristica)
+        
+        self.assertEqual(len(frontera), 0)
+        self.agente.generar_sucesores.assert_called_once_with(estado)
+        
+    def test_expandir_nodo_todos_visitados(self):
+        estado = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+        nuevo_estado = (1, 2, 3, 4, 5, 6, 7, 0, 8)
+        camino: List[str] = []
+        frontera: List[Tuple[int, Tuple[int, ...], List[str]]] = []
+        visitados: Set[Tuple[int, ...]] = {nuevo_estado}
+        heuristica = Mock(return_value=0)
+        
+        self.agente.generar_sucesores = Mock(return_value=[("abajo", nuevo_estado)])
+        
+        self.agente.expandir_nodo(estado, camino, frontera, visitados, heuristica)
+        
+        self.assertEqual(len(frontera), 0)
+        self.agente.generar_sucesores.assert_called_once_with(estado)
+        
+    def test_expandir_nodo_con_sucesor_valido(self):
+        estado = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+        nuevo_estado = (1, 2, 3, 4, 5, 6, 7, 0, 8)
+        camino: List[str] = []
+        frontera: List[Tuple[int, Tuple[int, ...], List[str]]] = []
+        visitados: Set[Tuple[int, ...]] = set()
+        heuristica = Mock(return_value=1)
+
+        self.agente.generar_sucesores = Mock(return_value=[("abajo", nuevo_estado)])
+        self.agente.expandir_nodo(estado, camino, frontera, visitados, heuristica)
+        
+        self.assertEqual(len(frontera), 1)
+        self.assertEqual(frontera[0], (1, nuevo_estado, ["abajo"]))
+        self.agente.generar_sucesores.assert_called_once_with(estado)
+        heuristica.assert_called_once_with(nuevo_estado)
+
 if __name__ == '__main__':
     unittest.main()
