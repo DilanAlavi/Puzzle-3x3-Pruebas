@@ -6,6 +6,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from AgenteBot import AgenteBot
 from typing import Tuple, Callable, List
+from unittest.mock import Mock, patch
 from unittest.mock import patch
 
 class TestAgenteBot(unittest.TestCase):
@@ -342,6 +343,85 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(estado_resultado, estado2)
         self.assertEqual(camino_resultado, ["derecha"])
         self.assertEqual(len(frontera), 2)
+    
+    # Patrick 13
+    def test_camino_1_directo_estado_meta(self):
+        """Test para el camino 1: Estado inicial es el estado meta
+        Camino: Inicialización -> ¿Frontera vacía? No -> ¿Es estado meta? Sí -> Return"""
+        
+        estado_inicial = (1, 2, 3, 4, 5, 6, 7, 8, 0)  # Estado meta
+        heuristica_mock = Mock(return_value=0)
+        
+        camino, nodos, max_frontera = self.agente.busqueda_codiciosa(estado_inicial, heuristica_mock)
+        
+        self.assertEqual(camino, [])
+        self.assertEqual(nodos, 0)
+        self.assertEqual(max_frontera, 1)
+        heuristica_mock.assert_called_once_with(estado_inicial)
+
+    def test_camino_2_estado_visitado(self):
+        """Test para el camino 2: Estado ya visitado
+        Camino: Inicialización -> ¿Frontera vacía? No -> ¿Es estado meta? No -> 
+        ¿Estado en visitados? Sí -> Continuar loop"""
+        
+        estado_inicial = (1, 2, 3, 4, 0, 5, 7, 8, 6)
+        estado_repetido = (1, 2, 3, 4, 0, 5, 7, 8, 6)
+        
+        def generar_sucesores_mock(estado):
+            # Solo genera el mismo estado como sucesor
+            return [("derecha", estado_repetido)]
+        
+        with patch.object(self.agente, 'generar_sucesores', side_effect=generar_sucesores_mock):
+            camino, nodos, max_frontera = self.agente.busqueda_codiciosa(estado_inicial, lambda x: 1)
+        
+        self.assertEqual(camino, [])
+        self.assertEqual(nodos, 1)
+        self.assertTrue(max_frontera > 0)
+
+    def test_camino_3_sin_solucion(self):
+        """Test para el camino 3: No hay solución (frontera vacía)
+        Camino: Inicialización -> ¿Frontera vacía? Sí -> Return lista vacía"""
+        
+        estado_inicial = (1, 2, 3, 4, 5, 6, 7, 0, 8)
+        
+        # Mock para generar_sucesores que retorna lista vacía
+        with patch.object(self.agente, 'generar_sucesores', return_value=[]):
+            with patch.object(self.agente, 'inicializar_frontera', return_value=[]):
+                camino, nodos, max_frontera = self.agente.busqueda_codiciosa(estado_inicial, lambda x: 1)
+        
+        self.assertEqual(camino, [])
+        self.assertEqual(nodos, 0)
+        self.assertEqual(max_frontera, 0)
+
+    def test_camino_4_expansion_hasta_meta(self):
+        """Test para el camino 4: Expansión de nodos hasta encontrar meta
+        Camino: Inicialización -> ¿Frontera vacía? No -> ¿Es estado meta? No -> 
+        ¿Estado en visitados? No -> Expandir nodo -> Encontrar meta"""
+        
+        estado_inicial = (1, 2, 3, 4, 0, 5, 7, 8, 6)
+        estado_intermedio = (1, 2, 3, 4, 5, 0, 7, 8, 6)
+        estado_final = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+        
+        def heuristica_mock(estado):
+            if estado == estado_final:
+                return 0
+            elif estado == estado_intermedio:
+                return 1
+            return 2
+        
+        def generar_sucesores_mock(estado):
+            if estado == estado_inicial:
+                return [("derecha", estado_intermedio)]
+            elif estado == estado_intermedio:
+                return [("derecha", estado_final)]
+            return []
+        
+        with patch.object(self.agente, 'generar_sucesores', side_effect=generar_sucesores_mock):
+            camino, nodos, max_frontera = self.agente.busqueda_codiciosa(estado_inicial, heuristica_mock)
+        
+        self.assertEqual(camino, ["derecha", "derecha"])
+        self.assertEqual(nodos, 2)
+        self.assertTrue(max_frontera > 0)
 
 if __name__ == '__main__':
     unittest.main()
