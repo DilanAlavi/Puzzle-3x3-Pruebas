@@ -467,6 +467,78 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(frontera[0], (1, nuevo_estado, ["abajo"]))
         self.agente.generar_sucesores.assert_called_once_with(estado)
         heuristica.assert_called_once_with(nuevo_estado)
+    #Patrick 19
+    def test_frontera_vacia(self):
+        """
+        Test case para cuando el estado inicial es el estado meta.
+        En este caso, la frontera tendrá al menos un elemento inicial,
+        por lo que max_frontera debe ser 1.
+        """
+        estado_inicial = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+        camino, nodos, max_frontera = self.agente.a_estrella(
+            estado_inicial,
+            self.agente.heuristica_distancia_manhattan
+        )
+        # La frontera siempre tendrá al menos un elemento al inicio
+        self.assertEqual(max_frontera, 1)
+        # Como es estado meta, no expandimos nodos
+        self.assertEqual(nodos, 0)
+        # Devuelve camino vacío porque ya está en estado meta
+        self.assertEqual(camino, [])
+
+    def test_estado_meta_inmediato(self):
+        """
+        Test case para cuando el estado inicial es el estado meta.
+        El comportamiento esperado es retornar un camino vacío
+        ya que no necesita movimientos.
+        """
+        estado_inicial = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+        camino, nodos, max_frontera = self.agente.a_estrella(
+            estado_inicial,
+            self.agente.heuristica_distancia_manhattan
+        )
+        # No necesita movimientos porque ya está en estado meta
+        self.assertEqual(camino, [])
+        # No expande nodos porque ya está en estado meta
+        self.assertEqual(nodos, 0)
+        # La frontera siempre tiene al menos un elemento inicial
+        self.assertEqual(max_frontera, 1)
+
+    def test_estado_visitado(self):
+        """
+        Test case para cuando se visita un estado.
+        El número de nodos expandidos dependerá de la implementación específica
+        y la heurística utilizada.
+        """
+        estado_inicial = (1, 2, 3, 4, 5, 0, 7, 8, 6)
+        camino, nodos, max_frontera = self.agente.a_estrella(
+            estado_inicial,
+            self.agente.heuristica_distancia_manhattan
+        )
+        # Verificamos que se hayan expandido nodos
+        self.assertGreater(nodos, 0)
+        # La frontera debe tener al menos un elemento
+        self.assertGreaterEqual(max_frontera, 1)
+        # Debe encontrar un camino válido
+        self.assertIsInstance(camino, list)
+
+    def test_expansion_normal(self):
+        """
+        Test case para expansión normal de estados.
+        El número exacto de nodos expandidos puede variar según la implementación,
+        pero debe ser mayor que 0.
+        """
+        estado_inicial = (1, 2, 3, 4, 0, 5, 7, 8, 6)
+        camino, nodos, max_frontera = self.agente.a_estrella(
+            estado_inicial,
+            self.agente.heuristica_distancia_manhattan
+        )
+        # Debe expandir al menos un nodo
+        self.assertGreater(nodos, 0)
+        # La frontera debe tener más de un elemento en algún momento
+        self.assertGreater(max_frontera, 1)
+        # Debe encontrar un camino con al menos un movimiento
+        self.assertGreater(len(camino), 0)
 
 if __name__ == '__main__':
     unittest.main()
