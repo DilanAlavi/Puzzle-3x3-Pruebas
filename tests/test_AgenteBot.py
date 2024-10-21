@@ -553,6 +553,17 @@ class TestAgenteBot(unittest.TestCase):
         max_frontera = 1
         nuevo_max = self.agente.actualizar_max_frontera(frontera, max_frontera)
         self.assertEqual(nuevo_max, 2)
-        
+
+    # Patrick 23
+    def test_es_estado_meta_verdadero(self):
+        estado = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+        self.assertTrue(self.agente.es_estado_meta(estado))
+
+    def test_es_estado_meta_falso(self):
+        estado = (1, 2, 3, 4, 5, 6, 7, 0, 8)
+        self.assertFalse(self.agente.es_estado_meta(estado))
+
+    # Patrick 27
+
 if __name__ == '__main__':
     unittest.main()
