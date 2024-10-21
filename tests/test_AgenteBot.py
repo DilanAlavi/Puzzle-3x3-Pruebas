@@ -540,5 +540,12 @@ class TestAgenteBot(unittest.TestCase):
         # Debe encontrar un camino con al menos un movimiento
         self.assertGreater(len(camino), 0)
 
+    # Patrick 20
+    def test_inicializar_frontera_a_estrella(self):
+        estado_inicial = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+        frontera = self.agente.inicializar_frontera_a_estrella(estado_inicial)
+        self.assertEqual(len(frontera), 1)
+        self.assertEqual(frontera[0], (0, 0, estado_inicial, []))
+
 if __name__ == '__main__':
     unittest.main()
