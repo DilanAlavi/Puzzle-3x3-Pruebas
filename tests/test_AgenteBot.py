@@ -547,5 +547,12 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(len(frontera), 1)
         self.assertEqual(frontera[0], (0, 0, estado_inicial, []))
 
+    # Patrick 21
+    def test_actualizar_max_frontera_mayor(self):
+        frontera = [(0, 0, (1,2,3), []), (0, 0, (4,5,6), [])]
+        max_frontera = 1
+        nuevo_max = self.agente.actualizar_max_frontera(frontera, max_frontera)
+        self.assertEqual(nuevo_max, 2)
+        
 if __name__ == '__main__':
     unittest.main()
