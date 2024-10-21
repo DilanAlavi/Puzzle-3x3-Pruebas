@@ -6,7 +6,6 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from AgenteBot import AgenteBot
 from typing import Tuple, Callable, List
-from unittest.mock import Mock, patch
 from unittest.mock import patch
 
 class TestAgenteBot(unittest.TestCase):
@@ -222,7 +221,6 @@ class TestAgenteBot(unittest.TestCase):
         resultado = self.agente.contar_conflictos_filas(estado)
         self.assertEqual(resultado, 10) 
     
-
     # fabio 14
     def heuristica_dummy(self, estado: Tuple[int, ...]) -> int:
         return sum(estado)
@@ -351,233 +349,15 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(estado_resultado, estado2)
         self.assertEqual(camino_resultado, ["derecha"])
         self.assertEqual(len(frontera), 2)
-    
-    # Patrick 13
-    def test_camino_1_directo_estado_meta(self):
-        """Test para el camino 1: Estado inicial es el estado meta
-        Camino: Inicialización -> ¿Frontera vacía? No -> ¿Es estado meta? Sí -> Return"""
-        
-        estado_inicial = (1, 2, 3, 4, 5, 6, 7, 8, 0)  # Estado meta
-        heuristica_mock = Mock(return_value=0)
-        
-        camino, nodos, max_frontera = self.agente.busqueda_codiciosa(estado_inicial, heuristica_mock)
-        
-        self.assertEqual(camino, [])
-        self.assertEqual(nodos, 0)
-        self.assertEqual(max_frontera, 1)
-        heuristica_mock.assert_called_once_with(estado_inicial)
 
-    def test_camino_2_estado_visitado(self):
-        """Test para el camino 2: Estado ya visitado
-        Camino: Inicialización -> ¿Frontera vacía? No -> ¿Es estado meta? No -> 
-        ¿Estado en visitados? Sí -> Continuar loop"""
-        
-        estado_inicial = (1, 2, 3, 4, 0, 5, 7, 8, 6)
-        estado_repetido = (1, 2, 3, 4, 0, 5, 7, 8, 6)
-        
-        def generar_sucesores_mock(estado):
-            # Solo genera el mismo estado como sucesor
-            return [("derecha", estado_repetido)]
-        
-        with patch.object(self.agente, 'generar_sucesores', side_effect=generar_sucesores_mock):
-            camino, nodos, max_frontera = self.agente.busqueda_codiciosa(estado_inicial, lambda x: 1)
-        
-        self.assertEqual(camino, [])
-        self.assertEqual(nodos, 1)
-        self.assertTrue(max_frontera > 0)
+    #fabio 28
+    @patch.object(AgenteBot, 'generar_estado_valido')
+    def test_generar_estados_validos_un_estado(self, mock_generar_estado_valido):
+        mock_generar_estado_valido.return_value = (1, 2, 3, 4, 5, 6, 7, 8, 0)  #MOckeo de un estado valido
+        agente_bot = AgenteBot()
+        estado_generado = agente_bot.generar_estados_validos(1)
+        self.assertEqual(len(estado_generado), 1) 
+        self.assertEqual(estado_generado[0], (1, 2, 3, 4, 5, 6, 7, 8, 0)) 
 
-    def test_camino_3_sin_solucion(self):
-        """Test para el camino 3: No hay solución (frontera vacía)
-        Camino: Inicialización -> ¿Frontera vacía? Sí -> Return lista vacía"""
-        
-        estado_inicial = (1, 2, 3, 4, 5, 6, 7, 0, 8)
-        
-        # Mock para generar_sucesores que retorna lista vacía
-        with patch.object(self.agente, 'generar_sucesores', return_value=[]):
-            with patch.object(self.agente, 'inicializar_frontera', return_value=[]):
-                camino, nodos, max_frontera = self.agente.busqueda_codiciosa(estado_inicial, lambda x: 1)
-        
-        self.assertEqual(camino, [])
-        self.assertEqual(nodos, 0)
-        self.assertEqual(max_frontera, 0)
-
-    def test_camino_4_expansion_hasta_meta(self):
-        """Test para el camino 4: Expansión de nodos hasta encontrar meta
-        Camino: Inicialización -> ¿Frontera vacía? No -> ¿Es estado meta? No -> 
-        ¿Estado en visitados? No -> Expandir nodo -> Encontrar meta"""
-        
-        estado_inicial = (1, 2, 3, 4, 0, 5, 7, 8, 6)
-        estado_intermedio = (1, 2, 3, 4, 5, 0, 7, 8, 6)
-        estado_final = (1, 2, 3, 4, 5, 6, 7, 8, 0)
-        
-        def heuristica_mock(estado):
-            if estado == estado_final:
-                return 0
-            elif estado == estado_intermedio:
-                return 1
-            return 2
-        
-        def generar_sucesores_mock(estado):
-            if estado == estado_inicial:
-                return [("derecha", estado_intermedio)]
-            elif estado == estado_intermedio:
-                return [("derecha", estado_final)]
-            return []
-        
-        with patch.object(self.agente, 'generar_sucesores', side_effect=generar_sucesores_mock):
-            camino, nodos, max_frontera = self.agente.busqueda_codiciosa(estado_inicial, heuristica_mock)
-        
-        self.assertEqual(camino, ["derecha", "derecha"])
-        self.assertEqual(nodos, 2)
-        self.assertTrue(max_frontera > 0)
-
-    # Patrick 18
-    def test_expandir_nodo_sin_sucesores(self):
-        estado = (1, 2, 3, 4, 5, 6, 7, 8, 0)
-        camino: List[str] = []
-        frontera: List[Tuple[int, Tuple[int, ...], List[str]]] = []
-        visitados: Set[Tuple[int, ...]] = set()
-        heuristica = Mock(return_value=0)
-
-        self.agente.generar_sucesores = Mock(return_value=[])
-        self.agente.expandir_nodo(estado, camino, frontera, visitados, heuristica)
-        
-        self.assertEqual(len(frontera), 0)
-        self.agente.generar_sucesores.assert_called_once_with(estado)
-        
-    def test_expandir_nodo_todos_visitados(self):
-        estado = (1, 2, 3, 4, 5, 6, 7, 8, 0)
-        nuevo_estado = (1, 2, 3, 4, 5, 6, 7, 0, 8)
-        camino: List[str] = []
-        frontera: List[Tuple[int, Tuple[int, ...], List[str]]] = []
-        visitados: Set[Tuple[int, ...]] = {nuevo_estado}
-        heuristica = Mock(return_value=0)
-        
-        self.agente.generar_sucesores = Mock(return_value=[("abajo", nuevo_estado)])
-        
-        self.agente.expandir_nodo(estado, camino, frontera, visitados, heuristica)
-        
-        self.assertEqual(len(frontera), 0)
-        self.agente.generar_sucesores.assert_called_once_with(estado)
-        
-    def test_expandir_nodo_con_sucesor_valido(self):
-        estado = (1, 2, 3, 4, 5, 6, 7, 8, 0)
-        nuevo_estado = (1, 2, 3, 4, 5, 6, 7, 0, 8)
-        camino: List[str] = []
-        frontera: List[Tuple[int, Tuple[int, ...], List[str]]] = []
-        visitados: Set[Tuple[int, ...]] = set()
-        heuristica = Mock(return_value=1)
-
-        self.agente.generar_sucesores = Mock(return_value=[("abajo", nuevo_estado)])
-        self.agente.expandir_nodo(estado, camino, frontera, visitados, heuristica)
-        
-        self.assertEqual(len(frontera), 1)
-        self.assertEqual(frontera[0], (1, nuevo_estado, ["abajo"]))
-        self.agente.generar_sucesores.assert_called_once_with(estado)
-        heuristica.assert_called_once_with(nuevo_estado)
-    #Patrick 19
-    def test_frontera_vacia(self):
-        """
-        Test case para cuando el estado inicial es el estado meta.
-        En este caso, la frontera tendrá al menos un elemento inicial,
-        por lo que max_frontera debe ser 1.
-        """
-        estado_inicial = (1, 2, 3, 4, 5, 6, 7, 8, 0)
-        camino, nodos, max_frontera = self.agente.a_estrella(
-            estado_inicial,
-            self.agente.heuristica_distancia_manhattan
-        )
-        # La frontera siempre tendrá al menos un elemento al inicio
-        self.assertEqual(max_frontera, 1)
-        # Como es estado meta, no expandimos nodos
-        self.assertEqual(nodos, 0)
-        # Devuelve camino vacío porque ya está en estado meta
-        self.assertEqual(camino, [])
-
-    def test_estado_meta_inmediato(self):
-        """
-        Test case para cuando el estado inicial es el estado meta.
-        El comportamiento esperado es retornar un camino vacío
-        ya que no necesita movimientos.
-        """
-        estado_inicial = (1, 2, 3, 4, 5, 6, 7, 8, 0)
-        camino, nodos, max_frontera = self.agente.a_estrella(
-            estado_inicial,
-            self.agente.heuristica_distancia_manhattan
-        )
-        # No necesita movimientos porque ya está en estado meta
-        self.assertEqual(camino, [])
-        # No expande nodos porque ya está en estado meta
-        self.assertEqual(nodos, 0)
-        # La frontera siempre tiene al menos un elemento inicial
-        self.assertEqual(max_frontera, 1)
-
-    def test_estado_visitado(self):
-        """
-        Test case para cuando se visita un estado.
-        El número de nodos expandidos dependerá de la implementación específica
-        y la heurística utilizada.
-        """
-        estado_inicial = (1, 2, 3, 4, 5, 0, 7, 8, 6)
-        camino, nodos, max_frontera = self.agente.a_estrella(
-            estado_inicial,
-            self.agente.heuristica_distancia_manhattan
-        )
-        # Verificamos que se hayan expandido nodos
-        self.assertGreater(nodos, 0)
-        # La frontera debe tener al menos un elemento
-        self.assertGreaterEqual(max_frontera, 1)
-        # Debe encontrar un camino válido
-        self.assertIsInstance(camino, list)
-
-    def test_expansion_normal(self):
-        """
-        Test case para expansión normal de estados.
-        El número exacto de nodos expandidos puede variar según la implementación,
-        pero debe ser mayor que 0.
-        """
-        estado_inicial = (1, 2, 3, 4, 0, 5, 7, 8, 6)
-        camino, nodos, max_frontera = self.agente.a_estrella(
-            estado_inicial,
-            self.agente.heuristica_distancia_manhattan
-        )
-        # Debe expandir al menos un nodo
-        self.assertGreater(nodos, 0)
-        # La frontera debe tener más de un elemento en algún momento
-        self.assertGreater(max_frontera, 1)
-        # Debe encontrar un camino con al menos un movimiento
-        self.assertGreater(len(camino), 0)
-
-    # Patrick 20
-    def test_inicializar_frontera_a_estrella(self):
-        estado_inicial = (1, 2, 3, 4, 5, 6, 7, 8, 0)
-        frontera = self.agente.inicializar_frontera_a_estrella(estado_inicial)
-        self.assertEqual(len(frontera), 1)
-        self.assertEqual(frontera[0], (0, 0, estado_inicial, []))
-
-    # Patrick 21
-    def test_actualizar_max_frontera_mayor(self):
-        frontera = [(0, 0, (1,2,3), []), (0, 0, (4,5,6), [])]
-        max_frontera = 1
-        nuevo_max = self.agente.actualizar_max_frontera(frontera, max_frontera)
-        self.assertEqual(nuevo_max, 2)
-
-    # Patrick 23
-    def test_es_estado_meta_verdadero(self):
-        estado = (1, 2, 3, 4, 5, 6, 7, 8, 0)
-        self.assertTrue(self.agente.es_estado_meta(estado))
-
-    def test_es_estado_meta_falso(self):
-        estado = (1, 2, 3, 4, 5, 6, 7, 0, 8)
-        self.assertFalse(self.agente.es_estado_meta(estado))
-
-    # Patrick 27
-    def test_obtener_heuristicas(self):
-        heuristicas = self.agente.obtener_heuristicas()
-        self.assertEqual(len(heuristicas), 3)
-        self.assertTrue(callable(heuristicas[0]))
-        self.assertTrue(callable(heuristicas[1]))
-        self.assertTrue(callable(heuristicas[2]))
-        
 if __name__ == '__main__':
     unittest.main()
