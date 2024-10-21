@@ -179,40 +179,48 @@ class TestAgenteBot(unittest.TestCase):
         h_manhattan = self.agente.heuristica_distancia_manhattan(estado_aleatorio)
         self.assertGreaterEqual(h_slc, h_manhattan)
 
-
     # fabio 11
     def test_contar_conflictos_filas_error(self):
-            estado_invalido = (1, 2, 3, 4, 5, 6, 7, 8) # estado con 8 elems
+            estado_invalido = (1, 2, 3) # estado con 8 elems
             with self.assertRaises(ValueError):
                 self.agente.contar_conflictos_filas(estado_invalido) 
-    def test_contar_conflictos_filas_no_conflictos(self):
-        estado = (1, 2, 0, 4, 5, 6, 7, 8, 0)
-        conflictos = self.agente.contar_conflictos_filas(estado)
-        self.assertEqual(conflictos, 0)
-    def test_contar_conflictos_filas_caminos(self):
-        estado = (1, 0, 2, 4, 5, 0, 7, 8, 0)
-        conflictos = self.agente.contar_conflictos_filas(estado)
-        self.assertEqual(conflictos, 0)
-    def test_contar_conflictos_filas_caminos3(self):
-        estado = (1, 2, 0, 0, 5, 0, 7, 8, 0)
-        conflictos = self.agente.contar_conflictos_filas(estado)
-        self.assertEqual(conflictos, 0)
-    def test_contar_conflictos_filas_caminos4(self):
-        estado = (3, 2, 0, 0, 5, 0, 7, 8, 0)
-        conflictos = self.agente.contar_conflictos_filas(estado)
-        self.assertEqual(conflictos, 2)
-    def test_contar_conflictos_filas_no_conflictos2(self):
-        estado = (1, 0, 0, 4, 0, 6, 7, 8, 0)
-        conflictos = self.agente.contar_conflictos_filas(estado)
-        self.assertEqual(conflictos, 0) 
-    def test_contar_conflictos_filas_no_conflictos3(self):
-        estado = (0, 0, 0, 4, 5, 6, 7, 8, 0)
-        conflictos = self.agente.contar_conflictos_filas(estado)
-        self.assertEqual(conflictos, 0) 
-    def test_contar_conflictos_filas_no_conflictos4(self):
-        estado = (0, 0, 0, 0, 0, 0, 0, 0, 0) 
-        conflictos = self.agente.contar_conflictos_filas(estado)
-        self.assertEqual(conflictos, 0)
+    def test_contar_conflictos_filas_path_9(self):
+        estado = (3, 2, 1, 6, 5, 4, 9, 8, 7) 		
+        resultado = self.agente.contar_conflictos_filas(estado)
+        self.assertEqual(resultado, 18)  
+    def test_contar_conflictos_filas_path_8(self):
+        estado = (3, 2, 1, 6, 5, 8, 4, 9, 7) 
+        resultado = self.agente.contar_conflictos_filas(estado)
+        self.assertEqual(resultado, 10) 
+    def test_contar_conflictos_filas_path_7(self):
+        estado = (9, 2, 1, 6, 5, 8, 4, 3, 7) 
+        resultado = self.agente.contar_conflictos_filas(estado)
+        self.assertEqual(resultado, 4) 
+    def test_contar_conflictos_filas_path_6(self):
+        estado = (0, 2, 3, 6, 0, 4, 9, 8, 0)
+        resultado = self.agente.contar_conflictos_filas(estado)
+        self.assertEqual(resultado, 4)  # Solo hay 2 conflictos (6 y 4), no se ejecuta cuando hay ceros
+    def test_contar_conflictos_filas_path_5(self):
+        estado = (4, 5, 6, 1, 2, 3, 7, 8, 9)  # 4, 5 y 6 no pertenecen a la fila 0
+        resultado = self.agente.contar_conflictos_filas(estado)
+        self.assertEqual(resultado, 0)  # No hay conflictos contados ya que el if es falso
+    def test_contar_conflictos_filas_path_4(self):
+        estado = (9, 5, 6, 1, 2, 3, 7, 8, 4)  # 4, 5 y 6 no pertenecen a la fila 0
+        resultado = self.agente.contar_conflictos_filas(estado)
+        self.assertEqual(resultado, 0)  # No hay conflictos contados ya que el if es falso
+    def test_contar_conflictos_filas_path_3(self):
+        estado = (1, 2, 3, 4, 5, 6, 7, 8, 9)
+        resultado = self.agente.contar_conflictos_filas(estado)
+        self.assertEqual(resultado, 0)  # No debe haber conflictos en este estado ordenado
+    def test_contar_conflictos_filas_path_2(self):
+        estado = (1, 3, 0, 4, 5, 6, 7, 8, 2)
+        resultado = self.agente.contar_conflictos_filas(estado)
+        self.assertEqual(resultado, 0)  # No debe haber conflictos en este estado ordenado
+    def test_contar_conflictos_filas_path_1(self):
+        estado = (2, 1, 3, 6, 5, 4, 0, 8, 7) 
+        resultado = self.agente.contar_conflictos_filas(estado)
+        self.assertEqual(resultado, 10) 
+    
 
     # fabio 14
     def heuristica_dummy(self, estado: Tuple[int, ...]) -> int:
