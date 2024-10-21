@@ -458,5 +458,6 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(self.resultados['clave1']['tiempo'], 10)
         self.assertEqual(self.resultados['clave2']['tiempo'], 20)
         self.assertEqual(self.resultados['clave3']['tiempo'], 30)
+        
 if __name__ == '__main__':
     unittest.main()
