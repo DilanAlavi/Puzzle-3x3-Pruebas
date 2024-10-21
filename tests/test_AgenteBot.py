@@ -564,6 +564,12 @@ class TestAgenteBot(unittest.TestCase):
         self.assertFalse(self.agente.es_estado_meta(estado))
 
     # Patrick 27
-
+    def test_obtener_heuristicas(self):
+        heuristicas = self.agente.obtener_heuristicas()
+        self.assertEqual(len(heuristicas), 3)
+        self.assertTrue(callable(heuristicas[0]))
+        self.assertTrue(callable(heuristicas[1]))
+        self.assertTrue(callable(heuristicas[2]))
+        
 if __name__ == '__main__':
     unittest.main()
