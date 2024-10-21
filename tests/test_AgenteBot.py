@@ -14,9 +14,18 @@ class TestAgenteBot(unittest.TestCase):
         self.estado_meta = (1, 2, 3, 4, 5, 6, 7, 8, 0)
         self.resultados = {}
         self.clave = "prueba_clave"
-        self.estado = (1, 2, 3, 4, 5, 6, 0, 7, 8)  # Asegúrate de que este estado sea válido
-        self.max_profundidad = 3  # O cualquier valor que desees probar
-        self.tiempo_limite = 5  # O cualquier valor que desees probar
+        self.estado = (1, 2, 3, 4, 5, 6, 0, 7, 8) 
+        self.max_profundidad = 3  
+        self.tiempo_limite = 5
+    
+    def tearDown(self):
+        self.agente = None
+        self.estado_meta = None
+        self.resultados = None
+        self.clave = None
+        self.estado = None
+        self.max_profundidad = None
+        self.tiempo_limite = None
 
     def test_init(self):
         self.assertEqual(self.agente.estado_meta, (1, 2, 3, 4, 5, 6, 7, 8, 0))
