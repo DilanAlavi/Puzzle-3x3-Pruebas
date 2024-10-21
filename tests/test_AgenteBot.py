@@ -12,7 +12,12 @@ class TestAgenteBot(unittest.TestCase):
     def setUp(self):
         self.agente = AgenteBot()
         self.estado_meta = (1, 2, 3, 4, 5, 6, 7, 8, 0)
-        self.resultados = {}
+        self.resultados = {
+            'clave1': {'tiempo': 30},
+            'clave2': {'tiempo': 60},
+            'clave3': {'tiempo': 90},
+        }
+        self.num_estados = 0
         self.clave = "prueba_clave"
         self.estado = (1, 2, 3, 4, 5, 6, 0, 7, 8) 
         self.max_profundidad = 3  
@@ -22,6 +27,7 @@ class TestAgenteBot(unittest.TestCase):
         self.agente = None
         self.estado_meta = None
         self.resultados = None
+        self.num_estados = None
         self.clave = None
         self.estado = None
         self.max_profundidad = None
@@ -393,6 +399,7 @@ class TestAgenteBot(unittest.TestCase):
             self.assertEqual(resultados[key]['soluciones'], 0)
             self.assertEqual(resultados[key]['timeout'], 0)
 
+    #fabio 
     def test_actualizar_resultados_path_1(self):
         clave = 'test_clave'
         solucion = ['solucion1']
@@ -443,5 +450,13 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(self.resultados[clave]['optimas'], 0)  
         self.assertEqual(self.resultados[clave]['timeout'], 1)  # Debe incrementarse en 1    
 
+    #fabio 30
+    def test_promediar_tiempos_path_1(self):
+        # Llama a la función
+        self.agente.promediar_tiempos(self.resultados, 3)
+        # Verifica que los tiempos se han promediado correctamente
+        self.assertEqual(self.resultados['clave1']['tiempo'], 10)
+        self.assertEqual(self.resultados['clave2']['tiempo'], 20)
+        self.assertEqual(self.resultados['clave3']['tiempo'], 30)
 if __name__ == '__main__':
     unittest.main()
