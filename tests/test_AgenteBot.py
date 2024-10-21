@@ -375,6 +375,8 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(estado_generado[1], (2, 1, 3, 4, 5, 6, 7, 8, 0))  
         self.assertEqual(estado_generado[2], (3, 1, 2, 4, 5, 6, 7, 8, 0))  
         self.assertEqual(mock_generar_estado_valido.call_count, 3)  # Verificar que se llamó al mock 3 veces
+        #TEST ADICIONEALES
+        self.assertIn((1, 2, 3, 4, 5, 6, 7, 8, 0), estado_generado)  # Comprobar que un estado válido está en la lista
 
 if __name__ == '__main__':
     unittest.main()
