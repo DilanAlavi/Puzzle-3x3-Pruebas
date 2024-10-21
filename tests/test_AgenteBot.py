@@ -358,6 +358,10 @@ class TestAgenteBot(unittest.TestCase):
         estado_generado = agente_bot.generar_estados_validos(1)
         self.assertEqual(len(estado_generado), 1) 
         self.assertEqual(estado_generado[0], (1, 2, 3, 4, 5, 6, 7, 8, 0)) 
+        #TESTS ADICIONALES
+        self.assertIsInstance(estado_generado, list)  # Comprobar que el resultado es una lista
+        self.assertTrue(all(isinstance(i, tuple) and len(i) == 9 for i in estado_generado))  # Verificar que todos los elementos son tuplas de longitud 9
+
     @patch.object(AgenteBot, 'generar_estado_valido')
     def test_generar_estados_validos_multiple_estados(self, mock_generar_estado_valido):
         mock_generar_estado_valido.side_effect = [
