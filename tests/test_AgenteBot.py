@@ -393,5 +393,24 @@ class TestAgenteBot(unittest.TestCase):
             self.assertEqual(resultados[key]['soluciones'], 0)
             self.assertEqual(resultados[key]['timeout'], 0)
 
+    def test_actualizar_resultados_path_1(self):
+        clave = 'test_clave'
+        solucion = ['solucion1']
+        max_frontera = 10
+        tiempo = 5.0
+        self.agente.actualizar_resultados(self.resultados, clave, solucion, max_frontera, tiempo)
+        # Verificar que se haya inicializado la clave
+        self.assertIn(clave, self.resultados)
+        self.assertEqual(self.resultados[clave]['tiempo'], 5.0)
+        self.assertEqual(self.resultados[clave]['max_frontera'], 10)
+        self.assertEqual(self.resultados[clave]['soluciones'], 1)
+        self.assertEqual(self.resultados[clave]['optimas'], 1)
+        self.assertEqual(self.resultados[clave]['timeout'], 0)
+        tiempo_nuevo = 3.0 # verificando la actualizacion
+        self.agente.actualizar_resultados(self.resultados, clave, solucion, max_frontera, tiempo_nuevo)
+        self.assertEqual(self.resultados[clave]['tiempo'], 8.0)
+        self.assertEqual(self.resultados[clave]['soluciones'], 2)
+        self.assertEqual(self.resultados[clave]['optimas'], 2)
+
 if __name__ == '__main__':
     unittest.main()
