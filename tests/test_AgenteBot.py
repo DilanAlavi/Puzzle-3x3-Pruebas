@@ -361,7 +361,6 @@ class TestAgenteBot(unittest.TestCase):
         #TESTS ADICIONALES
         self.assertIsInstance(estado_generado, list)  # Comprobar que el resultado es una lista
         self.assertTrue(all(isinstance(i, tuple) and len(i) == 9 for i in estado_generado))  # Verificar que todos los elementos son tuplas de longitud 9
-
     @patch.object(AgenteBot, 'generar_estado_valido')
     def test_generar_estados_validos_multiple_estados(self, mock_generar_estado_valido):
         mock_generar_estado_valido.side_effect = [
@@ -377,6 +376,22 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(mock_generar_estado_valido.call_count, 3)  # Verificar que se llamó al mock 3 veces
         #TEST ADICIONEALES
         self.assertIn((1, 2, 3, 4, 5, 6, 7, 8, 0), estado_generado)  # Comprobar que un estado válido está en la lista
+
+    #fabio 26
+    def test_inicializar_resultados(self):
+        resultados = self.agente.inicializar_resultados()
+        self.assertIn('codiciosa_h1', resultados)
+        self.assertIn('codiciosa_h2', resultados)
+        self.assertIn('codiciosa_h3', resultados)
+        self.assertIn('a_estrella_h1', resultados)
+        self.assertIn('a_estrella_h2', resultados)
+        self.assertIn('a_estrella_h3', resultados)
+        for key in resultados:
+            self.assertEqual(resultados[key]['optimas'], 0)
+            self.assertEqual(resultados[key]['tiempo'], 0)
+            self.assertEqual(resultados[key]['max_frontera'], 0)
+            self.assertEqual(resultados[key]['soluciones'], 0)
+            self.assertEqual(resultados[key]['timeout'], 0)
 
 if __name__ == '__main__':
     unittest.main()
