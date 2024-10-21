@@ -406,7 +406,6 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(self.resultados[clave]['soluciones'], 1)
         self.assertEqual(self.resultados[clave]['optimas'], 1)
         self.assertEqual(self.resultados[clave]['timeout'], 0)
-
     def test_actualizar_resultados_path_2(self):
         clave = 'test_clave'
         solucion = []  # Lista vacía, no entra en la condición de `optimas`
@@ -419,7 +418,18 @@ class TestAgenteBot(unittest.TestCase):
         self.assertEqual(self.resultados[clave]['soluciones'], 1)
         self.assertEqual(self.resultados[clave]['optimas'], 0)  # No debe incrementarse
         self.assertEqual(self.resultados[clave]['timeout'], 0)
-        
+    def test_actualizar_resultados_path_3(self):
+        clave = 'test_clave'
+        solucion = None  #  debe entrar en el bloque de timeout
+        max_frontera = 20
+        tiempo = 2.0
+        self.agente.actualizar_resultados(self.resultados, clave, solucion, max_frontera, tiempo)
+        self.assertIn(clave, self.resultados)
+        self.assertEqual(self.resultados[clave]['tiempo'], 2.0)
+        self.assertEqual(self.resultados[clave]['max_frontera'], 20)
+        self.assertEqual(self.resultados[clave]['soluciones'], 0)  
+        self.assertEqual(self.resultados[clave]['optimas'], 0)  
+        self.assertEqual(self.resultados[clave]['timeout'], 1)  # Debe incrementarse en 1        
 
 if __name__ == '__main__':
     unittest.main()
