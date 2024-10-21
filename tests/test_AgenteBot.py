@@ -358,6 +358,19 @@ class TestAgenteBot(unittest.TestCase):
         estado_generado = agente_bot.generar_estados_validos(1)
         self.assertEqual(len(estado_generado), 1) 
         self.assertEqual(estado_generado[0], (1, 2, 3, 4, 5, 6, 7, 8, 0)) 
+    @patch.object(AgenteBot, 'generar_estado_valido')
+    def test_generar_estados_validos_multiple_estados(self, mock_generar_estado_valido):
+        mock_generar_estado_valido.side_effect = [
+            (1, 2, 3, 4, 5, 6, 7, 8, 0),  
+            (2, 1, 3, 4, 5, 6, 7, 8, 0),  
+            (3, 1, 2, 4, 5, 6, 7, 8, 0)   
+        ]
+        estado_generado = self.agente.generar_estados_validos(3) 
+        self.assertEqual(len(estado_generado), 3) 
+        self.assertEqual(estado_generado[0], (1, 2, 3, 4, 5, 6, 7, 8, 0))  
+        self.assertEqual(estado_generado[1], (2, 1, 3, 4, 5, 6, 7, 8, 0))  
+        self.assertEqual(estado_generado[2], (3, 1, 2, 4, 5, 6, 7, 8, 0))  
+        self.assertEqual(mock_generar_estado_valido.call_count, 3)  # Verificar que se llamó al mock 3 veces
 
 if __name__ == '__main__':
     unittest.main()
